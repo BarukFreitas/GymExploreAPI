@@ -13,11 +13,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Desabilita CSRF para facilitar testes com Postman/Insomnia
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll() // Permite acesso a TODAS as rotas
+                .antMatchers("/**").permitAll()
                 .and()
-                .headers().frameOptions().sameOrigin(); // Permite que o H2 Console seja exibido em um frame
+                .headers().frameOptions().sameOrigin();
         return http.build();
     }
 }
