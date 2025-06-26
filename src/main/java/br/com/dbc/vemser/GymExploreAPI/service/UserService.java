@@ -1,9 +1,11 @@
 package br.com.dbc.vemser.GymExploreAPI.service;
 
-import br.com.dbc.vemser.GymExploreAPI.entity.UserEntity;
-import br.com.dbc.vemser.GymExploreAPI.exception.RegraDeNegocioException;
+import br.com.dbc.vemser.GymExploreAPI.dto.UserRegisterDTO;
+import br.com.dbc.vemser.GymExploreAPI.dto.UserResponseDTO;
+import br.com.dbc.vemser.GymExploreAPI.entity.User;
 import br.com.dbc.vemser.GymExploreAPI.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,30 +16,55 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserEntity registerUser(UserEntity user) throws RegraDeNegocioException {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RegraDeNegocioException("Nome de usuário já existe.");
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public UserResponseDTO registerUser(UserRegisterDTO userRegisterDTO) {
+        if (userRepository.existsByUsername(userRegisterDTO.getUsername())) {
+            throw new RuntimeException("Nome de usuário já existe.");
         }
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RegraDeNegocioException("E-mail já cadastrado.");
+        if (userRepository.existsByEmail(userRegisterDTO.getEmail())) {
+            throw new RuntimeException("E-mail já cadastrado.");
         }
-        return userRepository.save(user);
+
+        User user = new User();
+        user.setUsername(userRegisterDTO.getUsername());
+        user.setEmail(userRegisterDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
+
+        User savedUser = userRepository.save(user);
+
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        userResponseDTO.setId(savedUser.getId());
+        userResponseDTO.setUsername(savedUser.getUsername());
+        userResponseDTO.setEmail(savedUser.getEmail());
+        return userResponseDTO;
     }
 
-    public Optional<UserEntity> loginUser(String username, String password) throws RegraDeNegocioException {
-        Optional<UserEntity> userOptional = userRepository.findByUsername(username);
-        if (userOptional.isEmpty()) {
-            throw new RegraDeNegocioException("Nome de usuário ou senha inválidos.");
-        }
+    public Optional<UserResponseDTO> loginUser(String username, String password) {
+        Optional<User> userEntityOptional = userRepository.findByUsername(username);
 
-        UserEntity user = userOptional.get();
-        if (!user.getPassword().equals(password)) {
-            throw new RegraDeNegocioException("Nome de usuário ou senha inválidos.");
+        if (userEntityOptional.isPresent()) {
+            User user = userEntityOptional.get();
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                UserResponseDTO userResponseDTO = new UserResponseDTO();
+                userResponseDTO.setId(user.getId());
+                userResponseDTO.setUsername(user.getUsername());
+                userResponseDTO.setEmail(user.getEmail());
+                return Optional.of(userResponseDTO);
+            }
         }
-        return Optional.of(user);
+        return Optional.empty();
     }
 
-    public Optional<UserEntity> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public Optional<UserResponseDTO> findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(user -> {
+                    UserResponseDTO dto = new UserResponseDTO();
+                    dto.setId(user.getId());
+                    dto.setUsername(user.getUsername());
+                    dto.setEmail(user.getEmail());
+                    return dto;
+                });
     }
 }
