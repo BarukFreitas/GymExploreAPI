@@ -2,7 +2,6 @@ package br.com.dbc.vemser.GymExploreAPI.dto;
 
 import lombok.Data;
 
-// Importações para validação (se usar Spring Validation)
 // import javax.validation.constraints.Email;
 // import javax.validation.constraints.NotBlank;
 // import javax.validation.constraints.Size;

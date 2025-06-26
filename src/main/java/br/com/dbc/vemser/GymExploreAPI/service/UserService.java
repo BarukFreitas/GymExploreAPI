@@ -1,11 +1,11 @@
 package br.com.dbc.vemser.GymExploreAPI.service;
 
-import br.com.dbc.vemser.GymExploreAPI.dto.UserLoginDTO;
 import br.com.dbc.vemser.GymExploreAPI.dto.UserRegisterDTO;
 import br.com.dbc.vemser.GymExploreAPI.dto.UserResponseDTO;
-import br.com.dbc.vemser.GymExploreAPI.entity.UserEntity;
+import br.com.dbc.vemser.GymExploreAPI.entity.User;
 import br.com.dbc.vemser.GymExploreAPI.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +16,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserResponseDTO registerUser(UserRegisterDTO userRegisterDTO) {
         if (userRepository.existsByUsername(userRegisterDTO.getUsername())) {
             throw new RuntimeException("Nome de usuário já existe.");
@@ -24,15 +27,13 @@ public class UserService {
             throw new RuntimeException("E-mail já cadastrado.");
         }
 
-        // Mapeia DTO para Entidade
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(userRegisterDTO.getUsername());
-        userEntity.setEmail(userRegisterDTO.getEmail());
-        userEntity.setPassword(userRegisterDTO.getPassword()); // Lembre-se de HASHEAR a senha em produção!
+        User user = new User();
+        user.setUsername(userRegisterDTO.getUsername());
+        user.setEmail(userRegisterDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
 
-        UserEntity savedUser = userRepository.save(userEntity);
+        User savedUser = userRepository.save(user);
 
-        // Mapeia Entidade para DTO de resposta
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setId(savedUser.getId());
         userResponseDTO.setUsername(savedUser.getUsername());
@@ -41,30 +42,28 @@ public class UserService {
     }
 
     public Optional<UserResponseDTO> loginUser(String username, String password) {
-        Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
+        Optional<User> userEntityOptional = userRepository.findByUsername(username);
 
         if (userEntityOptional.isPresent()) {
-            UserEntity userEntity = userEntityOptional.get();
-            // Em produção: usar BCryptPasswordEncoder.matches(rawPassword, encodedPassword)
-            if (userEntity.getPassword().equals(password)) {
+            User user = userEntityOptional.get();
+            if (passwordEncoder.matches(password, user.getPassword())) {
                 UserResponseDTO userResponseDTO = new UserResponseDTO();
-                userResponseDTO.setId(userEntity.getId());
-                userResponseDTO.setUsername(userEntity.getUsername());
-                userResponseDTO.setEmail(userEntity.getEmail());
+                userResponseDTO.setId(user.getId());
+                userResponseDTO.setUsername(user.getUsername());
+                userResponseDTO.setEmail(user.getEmail());
                 return Optional.of(userResponseDTO);
             }
         }
         return Optional.empty();
     }
 
-    // Este método pode não ser necessário se o login retornar todas as informações relevantes
     public Optional<UserResponseDTO> findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .map(userEntity -> {
+                .map(user -> {
                     UserResponseDTO dto = new UserResponseDTO();
-                    dto.setId(userEntity.getId());
-                    dto.setUsername(userEntity.getUsername());
-                    dto.setEmail(userEntity.getEmail());
+                    dto.setId(user.getId());
+                    dto.setUsername(user.getUsername());
+                    dto.setEmail(user.getEmail());
                     return dto;
                 });
     }

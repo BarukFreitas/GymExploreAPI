@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -13,11 +15,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Desabilita CSRF para facilitar testes com Postman/Insomnia
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll() // Permite acesso a TODAS as rotas
+                .antMatchers("/**").permitAll()
                 .and()
-                .headers().frameOptions().sameOrigin(); // Permite que o H2 Console seja exibido em um frame
+                .headers().frameOptions().sameOrigin();
         return http.build();
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
