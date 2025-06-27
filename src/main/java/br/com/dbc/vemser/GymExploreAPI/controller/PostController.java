@@ -28,6 +28,7 @@ public class PostController {
         dto.setTimestamp(postEntity.getTimestamp());
         dto.setUserId(postEntity.getUser().getId());
         dto.setUsername(postEntity.getUser().getUsername());
+        dto.setImageUrl(postEntity.getImageUrl());
         return dto;
     }
 
@@ -35,7 +36,7 @@ public class PostController {
     public ResponseEntity<PostResponseDTO> createPost(
             @PathVariable Long userId,
             @RequestBody @Valid PostCreateDTO postCreateDTO) throws RegraDeNegocioException {
-        PostEntity newPost = postService.createPost(userId, postCreateDTO.getContent());
+        PostEntity newPost = postService.createPost(userId, postCreateDTO.getContent(), postCreateDTO.getImageUrl());
         return new ResponseEntity<>(toResponseDTO(newPost), HttpStatus.CREATED);
     }
 

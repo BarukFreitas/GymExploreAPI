@@ -10,4 +10,5 @@ public class PostResponseDTO {
     private LocalDateTime timestamp;
     private Long userId;
     private String username;
+    private String imageUrl;
 }

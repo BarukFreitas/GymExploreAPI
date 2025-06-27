@@ -10,4 +10,6 @@ public class PostCreateDTO {
     @NotBlank(message = "O conteúdo da postagem não pode estar vazio.")
     @Size(max = 1000, message = "A postagem não pode ter mais de 1000 caracteres.")
     private String content;
+
+    private String imageUrl;
 }

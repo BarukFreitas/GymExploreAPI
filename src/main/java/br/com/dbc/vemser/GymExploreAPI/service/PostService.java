@@ -21,11 +21,11 @@ public class PostService {
     private UserRepository userRepository;
 
     @Transactional
-    public PostEntity createPost(Long userId, String content) throws RegraDeNegocioException {
+    public PostEntity createPost(Long userId, String content, String imageUrl) throws RegraDeNegocioException {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado."));
 
-        PostEntity post = new PostEntity(content, user);
+        PostEntity post = new PostEntity(content, imageUrl, user);
 
         return postRepository.save(post);
     }
