@@ -15,11 +15,14 @@ import java.time.LocalDateTime;
 public class PostEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_seq")
+    @SequenceGenerator(name = "post_seq", sequenceName = "seq_post", allocationSize = 1)
     @Column(name = "id_post")
     private Long id;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    // >>> A CORREÇÃO ESTÁ AQUI <<<
+    @Lob // Informa ao Hibernate que este campo é um "Large Object" (CLOB para String)
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Column(name = "image_url")
