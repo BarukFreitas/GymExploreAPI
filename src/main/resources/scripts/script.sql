@@ -1,6 +1,23 @@
--- Remove tabelas e sequências se elas já existirem, para garantir uma criação limpa
 BEGIN
 EXECUTE IMMEDIATE 'DROP TABLE posts';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -942 THEN
+         RAISE;
+END IF;
+END;
+
+BEGIN
+EXECUTE IMMEDIATE 'DROP TABLE reviews';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -942 THEN
+         RAISE;
+END IF;
+END;
+
+BEGIN
+EXECUTE IMMEDIATE 'DROP TABLE user_roles';
 EXCEPTION
    WHEN OTHERS THEN
       IF SQLCODE != -942 THEN
@@ -27,7 +44,26 @@ END IF;
 END;
 
 BEGIN
+EXECUTE IMMEDIATE 'DROP TABLE roles';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -942 THEN
+         RAISE;
+END IF;
+END;
+
+
+BEGIN
 EXECUTE IMMEDIATE 'DROP SEQUENCE seq_post';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -2289 THEN
+         RAISE;
+END IF;
+END;
+
+BEGIN
+EXECUTE IMMEDIATE 'DROP SEQUENCE seq_review';
 EXCEPTION
    WHEN OTHERS THEN
       IF SQLCODE != -2289 THEN
@@ -53,15 +89,22 @@ EXCEPTION
 END IF;
 END;
 
+BEGIN
+EXECUTE IMMEDIATE 'DROP SEQUENCE seq_role';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -2289 THEN
+         RAISE;
+END IF;
+END;
 
--- Cria a sequência para a tabela USERS
+
 CREATE SEQUENCE seq_user
     START WITH 1
     INCREMENT BY 1
     NOCACHE
 NOCYCLE;
 
--- Cria a tabela USERS
 CREATE TABLE users (
                        id NUMBER(19,0) NOT NULL,
                        username VARCHAR2(255 CHAR) NOT NULL,
@@ -73,14 +116,12 @@ CREATE TABLE users (
 );
 
 
--- Cria a sequência para a tabela GYMS
 CREATE SEQUENCE seq_gym
     START WITH 1
     INCREMENT BY 1
     NOCACHE
 NOCYCLE;
 
--- Cria a tabela GYMS
 CREATE TABLE gyms (
                       id NUMBER(10,0) NOT NULL,
                       name VARCHAR2(255 CHAR),
@@ -91,14 +132,12 @@ CREATE TABLE gyms (
 );
 
 
--- Cria a sequência para a tabela POSTS
 CREATE SEQUENCE seq_post
     START WITH 1
     INCREMENT BY 1
     NOCACHE
 NOCYCLE;
 
--- Cria a tabela POSTS (versão final e correta)
 CREATE TABLE posts (
                        id_post NUMBER(19,0) NOT NULL,
                        content CLOB NOT NULL,
@@ -109,14 +148,12 @@ CREATE TABLE posts (
                        CONSTRAINT fk_posts_users FOREIGN KEY (id_user) REFERENCES users(id)
 );
 
--- Cria a sequência para a tabela REVIEWS
 CREATE SEQUENCE seq_review
     START WITH 1
     INCREMENT BY 1
     NOCACHE
 NOCYCLE;
 
--- Cria a tabela REVIEWS
 CREATE TABLE reviews (
                          id_review NUMBER(10,0) NOT NULL,
                          comment_text CLOB,
@@ -129,5 +166,28 @@ CREATE TABLE reviews (
                          CONSTRAINT fk_reviews_users FOREIGN KEY (id_user) REFERENCES users(id)
 );
 
--- Confirma a transação
+CREATE TABLE roles (
+    id NUMBER(10,0) NOT NULL,
+    role_name VARCHAR2(50 CHAR) NOT NULL UNIQUE,
+    CONSTRAINT pk_roles PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE seq_role
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+INSERT INTO roles (id, role_name) VALUES (seq_role.NEXTVAL, 'ROLE_USER');
+INSERT INTO roles (id, role_name) VALUES (seq_role.NEXTVAL, 'ROLE_GYM_OWNER');
+INSERT INTO roles (id, role_name) VALUES (seq_role.NEXTVAL, 'ROLE_ADMIN');
+
+CREATE TABLE user_roles (
+    user_id NUMBER(19,0) NOT NULL,
+    role_id NUMBER(10,0) NOT NULL,
+    CONSTRAINT pk_user_roles PRIMARY KEY (user_id, role_id),
+    CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
 COMMIT;
