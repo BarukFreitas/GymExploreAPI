@@ -7,4 +7,5 @@ public class GymCreateDTO {
     private String name;
     private String address;
     private String phone;
+    private String imageUrl;
 }

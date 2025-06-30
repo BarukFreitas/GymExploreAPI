@@ -8,12 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.web.multipart.MultipartFile;
-import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class GymService {
@@ -34,19 +32,24 @@ public class GymService {
                 .collect(Collectors.toList());
     }
 
-    public String addImage(Integer gymId, MultipartFile file) throws IOException {
+    public GymDTO update(Integer gymId, GymCreateDTO gymUpdateDTO) {
         Gym gym = gymRepository.findById(gymId)
                 .orElseThrow(() -> new EntityNotFoundException("Academia não encontrada com o id: " + gymId));
 
-        gym.setImageData(file.getBytes());
-        gym.setImageMimeType(file.getContentType());
+        gym.setName(gymUpdateDTO.getName());
+        gym.setAddress(gymUpdateDTO.getAddress());
+        gym.setPhone(gymUpdateDTO.getPhone());
+        gym.setImageUrl(gymUpdateDTO.getImageUrl());
 
-        gymRepository.save(gym);
-        return "Imagem adicionada com sucesso para a academia: " + gym.getName();
+        Gym updatedGym = gymRepository.save(gym);
+
+        return objectMapper.convertValue(updatedGym, GymDTO.class);
     }
 
-    public Gym findById(Integer gymId) {
-        return gymRepository.findById(gymId)
-                .orElseThrow(() -> new EntityNotFoundException("Academia não encontrada com o id: " + gymId));
+    public void delete(Integer gymId) {
+        if (!gymRepository.existsById(gymId)) {
+            throw new EntityNotFoundException("Academia não encontrada com o id: " + gymId);
+        }
+        gymRepository.deleteById(gymId);
     }
 }

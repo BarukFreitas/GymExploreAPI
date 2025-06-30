@@ -86,8 +86,7 @@ CREATE TABLE gyms (
                       name VARCHAR2(255 CHAR),
                       address VARCHAR2(255 CHAR),
                       phone VARCHAR2(255 CHAR),
-                      image_data BLOB,
-                      image_mime_type VARCHAR2(255 CHAR),
+                      image_url VARCHAR2(1024 CHAR),
                       CONSTRAINT pk_gyms PRIMARY KEY (id)
 );
 
