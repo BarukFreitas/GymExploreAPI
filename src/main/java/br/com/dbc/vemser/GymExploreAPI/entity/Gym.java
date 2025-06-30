@@ -1,7 +1,10 @@
 package br.com.dbc.vemser.GymExploreAPI.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "gyms")
@@ -24,4 +27,8 @@ public class Gym {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("gym-review")
+    private Set<Review> reviews = new HashSet<>();
 }
