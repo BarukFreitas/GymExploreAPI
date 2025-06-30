@@ -109,5 +109,25 @@ CREATE TABLE posts (
                        CONSTRAINT fk_posts_users FOREIGN KEY (id_user) REFERENCES users(id)
 );
 
+-- Cria a sequência para a tabela REVIEWS
+CREATE SEQUENCE seq_review
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+NOCYCLE;
+
+-- Cria a tabela REVIEWS
+CREATE TABLE reviews (
+                         id_review NUMBER(10,0) NOT NULL,
+                         comment_text CLOB,
+                         rating NUMBER(2,0) NOT NULL,
+                         creation_date TIMESTAMP NOT NULL,
+                         id_gym NUMBER(10,0) NOT NULL,
+                         id_user NUMBER(19,0) NOT NULL,
+                         CONSTRAINT pk_reviews PRIMARY KEY (id_review),
+                         CONSTRAINT fk_reviews_gyms FOREIGN KEY (id_gym) REFERENCES gyms(id),
+                         CONSTRAINT fk_reviews_users FOREIGN KEY (id_user) REFERENCES users(id)
+);
+
 -- Confirma a transação
 COMMIT;
