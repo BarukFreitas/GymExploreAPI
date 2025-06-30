@@ -9,7 +9,8 @@ import javax.persistence.*;
 public class Gym {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gym_seq")
+    @SequenceGenerator(name = "gym_seq", sequenceName = "seq_gym", allocationSize = 1)
     private Integer id;
 
     @Column(name = "name")
