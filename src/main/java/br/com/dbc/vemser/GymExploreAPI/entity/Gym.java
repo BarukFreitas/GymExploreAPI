@@ -22,10 +22,6 @@ public class Gym {
     @Column(name = "phone")
     private String phone;
 
-    @Lob
-    @Column(name = "image_data", columnDefinition="BLOB")
-    private byte[] imageData;
-
-    @Column(name = "image_mime_type")
-    private String imageMimeType;
+    @Column(name = "image_url")
+    private String imageUrl;
 }
