@@ -2,7 +2,6 @@ package br.com.dbc.vemser.GymExploreAPI.dto;
 
 import lombok.Data;
 
-
 @Data
 public class UserRegisterDTO {
     private String username;
@@ -10,4 +9,6 @@ public class UserRegisterDTO {
     private String password;
 
     private String email;
+
+    private String role;
 }
