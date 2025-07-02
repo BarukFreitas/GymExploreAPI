@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .container { background-color: #ffffff; max-width: 600px; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .header { background-color: #10b981; color: #ffffff; padding: 10px 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .header h1 { margin: 0; }
+        .content { padding: 20px; line-height: 1.6; color: #333; }
+        .content p { margin-bottom: 10px; }
+        .content strong { color: #0c0a09; }
+        .footer { text-align: center; font-size: 12px; color: #777; margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Mensagem Recebida!</h1>
+    </div>
+    <div class="content">
+        <h2>Olá, <span th:text="${userName}"></span>!</h2>
+        <p>Recebemos a sua mensagem e agradecemos o seu contato.</p>
+        <p>A nossa equipa irá analisá-la e responder o mais breve possível.</p>
+        <p>Atenciosamente,<br><strong>Equipa Gym Explore</strong></p>
+    </div>
+    <div class="footer">
+        <p>Você recebeu este e-mail porque enviou uma mensagem através do nosso formulário de contato.</p>
+    </div>
+</div>
+</body>
+</html>

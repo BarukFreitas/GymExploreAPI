@@ -23,25 +23,37 @@ public class EmailService {
 
     private final String destinatario = "netinho.rec@gmail.com";
 
-
-    public void sendContactEmail(String fromEmail, String subject, String message) throws MessagingException {
-
+    public void sendContactEmailToAdmin(String fromEmail, String subject, String message) throws MessagingException {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-
 
         Context context = new Context();
         context.setVariable("fromEmail", fromEmail);
         context.setVariable("subject", subject);
         context.setVariable("message", message);
 
-
         String htmlBody = templateEngine.process("contact-template", context);
-
 
         helper.setFrom(remetente);
         helper.setTo(destinatario);
         helper.setSubject("Nova Mensagem de Contato: " + subject);
+        helper.setText(htmlBody, true);
+
+        emailSender.send(mimeMessage);
+    }
+
+    public void sendContactConfirmationEmailToUser(String userName, String userEmail) throws MessagingException {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+        Context context = new Context();
+        context.setVariable("userName", userName);
+
+        String htmlBody = templateEngine.process("confirmation-template", context);
+
+        helper.setFrom(remetente);
+        helper.setTo(userEmail);
+        helper.setSubject("Recebemos a sua mensagem - Gym Explore");
         helper.setText(htmlBody, true);
 
         emailSender.send(mimeMessage);

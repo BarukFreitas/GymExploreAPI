@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/contact")
@@ -18,13 +20,19 @@ public class ContactController {
     private final EmailService emailService;
 
     @PostMapping
-    public ResponseEntity<Void> sendContactMessage(@RequestBody ContactDTO contactDTO) {
+    public ResponseEntity<Void> sendContactMessage(@RequestBody @Valid ContactDTO contactDTO) {
         try {
-            emailService.sendContactEmail(
+            emailService.sendContactEmailToAdmin(
                     contactDTO.getEmail(),
                     contactDTO.getSubject(),
                     contactDTO.getMessage()
             );
+
+            emailService.sendContactConfirmationEmailToUser(
+                    contactDTO.getName(),
+                    contactDTO.getEmail()
+            );
+
             return ResponseEntity.ok().build();
         } catch (MessagingException e) {
             e.printStackTrace();
