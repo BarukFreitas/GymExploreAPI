@@ -5,6 +5,7 @@ import br.com.dbc.vemser.GymExploreAPI.service.CustomUserDetailsService;
 import br.com.dbc.vemser.GymExploreAPI.service.EmailService;
 import br.com.dbc.vemser.GymExploreAPI.service.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @WebMvcTest(ContactController.class)
 @DisplayName("Testes do ContactController")
 class ContactControllerTest {

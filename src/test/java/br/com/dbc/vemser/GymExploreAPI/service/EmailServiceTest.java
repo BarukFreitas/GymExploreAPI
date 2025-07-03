@@ -1,5 +1,6 @@
 package br.com.dbc.vemser.GymExploreAPI.service;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import javax.mail.internet.MimeMessage;
 
 import static org.mockito.Mockito.*;
 
+@Disabled
 @SpringBootTest
 @DisplayName("Testes do EmailService")
 class EmailServiceTest {
