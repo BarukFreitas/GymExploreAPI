@@ -7,7 +7,7 @@ import br.com.dbc.vemser.GymExploreAPI.repository.PostRepository;
 import br.com.dbc.vemser.GymExploreAPI.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional; // Importe esta anotação
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional
+    @Transactional // Este já estava correto para a criação
     public PostEntity createPost(Long userId, String content, String imageUrl) throws RegraDeNegocioException {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado."));
@@ -30,10 +30,12 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    @Transactional // Adicione esta anotação aqui
     public List<PostEntity> getAllPosts() {
         return postRepository.findAllByOrderByTimestampDesc();
     }
 
+    @Transactional // Boa prática adicionar aqui também, se já não estiver
     public List<PostEntity> getPostsByUserId(Long userId) throws RegraDeNegocioException {
         if (!userRepository.existsById(userId)) {
             throw new RegraDeNegocioException("Usuário não encontrado para buscar postagens.");
@@ -41,7 +43,7 @@ public class PostService {
         return postRepository.findByUser_Id(userId);
     }
 
-    @Transactional
+    @Transactional // Este já estava correto para a exclusão
     public void deletePost(Long postId) throws RegraDeNegocioException {
         if (!postRepository.existsById(postId)) {
             throw new RegraDeNegocioException("Postagem não encontrada para exclusão.");
