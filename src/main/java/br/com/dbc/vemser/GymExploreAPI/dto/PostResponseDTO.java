@@ -11,4 +11,5 @@ public class PostResponseDTO {
     private Long userId;
     private String username;
     private String imageUrl;
+    private boolean pointsAwarded;
 }

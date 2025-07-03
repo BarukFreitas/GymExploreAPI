@@ -1,3 +1,4 @@
+-- Remove tabelas e sequências se elas já existirem, para garantir uma criação limpa
 BEGIN
 EXECUTE IMMEDIATE 'DROP TABLE posts';
 EXCEPTION
@@ -105,11 +106,13 @@ CREATE SEQUENCE seq_user
     NOCACHE
 NOCYCLE;
 
+-- Tabela USERS atualizada com a coluna de pontos
 CREATE TABLE users (
                        id NUMBER(19,0) NOT NULL,
                        username VARCHAR2(255 CHAR) NOT NULL,
                        password VARCHAR2(255 CHAR) NOT NULL,
                        email VARCHAR2(255 CHAR) NOT NULL,
+                       points NUMBER(10,0) DEFAULT 0 NOT NULL,
                        CONSTRAINT pk_users PRIMARY KEY (id),
                        CONSTRAINT uk_users_username UNIQUE (username),
                        CONSTRAINT uk_users_email UNIQUE (email)
@@ -166,28 +169,45 @@ CREATE TABLE reviews (
                          CONSTRAINT fk_reviews_users FOREIGN KEY (id_user) REFERENCES users(id)
 );
 
-CREATE TABLE roles (
-    id NUMBER(10,0) NOT NULL,
-    role_name VARCHAR2(50 CHAR) NOT NULL UNIQUE,
-    CONSTRAINT pk_roles PRIMARY KEY (id)
-);
-
 CREATE SEQUENCE seq_role
     START WITH 1
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
 
+CREATE TABLE roles (
+                       id NUMBER(10,0) NOT NULL,
+                       role_name VARCHAR2(50 CHAR) NOT NULL UNIQUE,
+                       CONSTRAINT pk_roles PRIMARY KEY (id)
+);
+
 INSERT INTO roles (id, role_name) VALUES (seq_role.NEXTVAL, 'ROLE_USER');
 INSERT INTO roles (id, role_name) VALUES (seq_role.NEXTVAL, 'ROLE_GYM_OWNER');
 INSERT INTO roles (id, role_name) VALUES (seq_role.NEXTVAL, 'ROLE_ADMIN');
 
 CREATE TABLE user_roles (
-    user_id NUMBER(19,0) NOT NULL,
-    role_id NUMBER(10,0) NOT NULL,
-    CONSTRAINT pk_user_roles PRIMARY KEY (user_id, role_id),
-    CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users(id),
-    CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles(id)
+                            user_id NUMBER(19,0) NOT NULL,
+                            role_id NUMBER(10,0) NOT NULL,
+                            CONSTRAINT pk_user_roles PRIMARY KEY (user_id, role_id),
+                            CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users(id),
+                            CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+
+CREATE SEQUENCE seq_gamification_log
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+
+CREATE TABLE gamification_log (
+                                  id_gamification_log NUMBER(19,0) NOT NULL,
+                                  id_user NUMBER(19,0) NOT NULL,
+                                  action_type VARCHAR2(50 CHAR) NOT NULL,
+                                  action_date DATE NOT NULL,
+                                  CONSTRAINT pk_gamification_log PRIMARY KEY (id_gamification_log),
+                                  CONSTRAINT fk_gamification_log_users FOREIGN KEY (id_user) REFERENCES users(id)
 );
 
 COMMIT;
