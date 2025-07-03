@@ -3,14 +3,12 @@ package br.com.dbc.vemser.GymExploreAPI.controller;
 import br.com.dbc.vemser.GymExploreAPI.dto.UserLoginDTO;
 import br.com.dbc.vemser.GymExploreAPI.dto.UserRegisterDTO;
 import br.com.dbc.vemser.GymExploreAPI.dto.UserResponseDTO;
+import br.com.dbc.vemser.GymExploreAPI.exception.RegraDeNegocioException;
 import br.com.dbc.vemser.GymExploreAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid; // Se for usar validações
 
@@ -24,6 +22,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Valid UserRegisterDTO userRegisterDTO) {
@@ -58,6 +57,17 @@ public class UserController {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Nome de usuário ou senha inválidos.");
             return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
+    }
+    @GetMapping("/{id}/points")
+    public ResponseEntity<Map<String, Integer>> getUserPoints(@PathVariable Long id) {
+        try {
+            Integer points = userService.getUserPoints(id);
+            Map<String, Integer> response = new HashMap<>();
+            response.put("points", points);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException | RegraDeNegocioException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }
