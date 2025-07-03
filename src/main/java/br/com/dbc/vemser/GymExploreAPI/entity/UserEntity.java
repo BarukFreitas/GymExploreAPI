@@ -47,6 +47,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "points")
     private Integer points = 0;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserPurchase> purchases = new HashSet<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",

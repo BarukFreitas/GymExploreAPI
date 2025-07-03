@@ -22,6 +22,8 @@ public class RoleInitializer implements CommandLineRunner {
         // Verifica e cria a ROLE_GYM_OWNER se não existir
         createRoleIfNotExists("ROLE_GYM_OWNER");
 
+        createRoleIfNotExists("ROLE_ADMIN");
+
         System.out.println("Roles inicializadas com sucesso!");
     }
 
