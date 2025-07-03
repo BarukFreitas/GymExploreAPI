@@ -1,0 +1,1 @@
+docker run --name gym-explore-postgres -e POSTGRES_DB=gymexploredb -e POSTGRES_USER=gymexploreuser -e POSTGRES_PASSWORD=gymexplorepass -p 5432:5432 -d postgres
