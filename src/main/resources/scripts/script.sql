@@ -1,4 +1,3 @@
--- Remove tabelas e sequências se elas já existirem, para garantir uma criação limpa
 BEGIN
 EXECUTE IMMEDIATE 'DROP TABLE posts';
 EXCEPTION
@@ -106,7 +105,6 @@ CREATE SEQUENCE seq_user
     NOCACHE
 NOCYCLE;
 
--- Tabela USERS atualizada com a coluna de pontos
 CREATE TABLE users (
                        id NUMBER(19,0) NOT NULL,
                        username VARCHAR2(255 CHAR) NOT NULL,

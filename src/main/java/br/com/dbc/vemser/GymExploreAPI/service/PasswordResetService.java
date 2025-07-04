@@ -25,10 +25,8 @@ public class PasswordResetService {
         UserEntity user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RegraDeNegocioException("E-mail não encontrado."));
 
-        // Gera um token único
         String token = UUID.randomUUID().toString();
 
-        // Define a data de expiração (ex: 1 hora a partir de agora)
         user.setPasswordResetToken(token);
         user.setTokenExpirationDate(LocalDateTime.now().plusHours(1));
 
@@ -46,15 +44,12 @@ public class PasswordResetService {
         UserEntity user = userRepository.findByPasswordResetToken(token)
                 .orElseThrow(() -> new RegraDeNegocioException("Token inválido ou expirado."));
 
-        // Valida se o token expirou
         if (user.getTokenExpirationDate().isBefore(LocalDateTime.now())) {
             throw new RegraDeNegocioException("Token expirado.");
         }
 
-        // Se o token for válido, redefine a senha
         user.setPassword(passwordEncoder.encode(newPassword));
 
-        // Limpa o token para que não possa ser usado novamente
         user.setPasswordResetToken(null);
         user.setTokenExpirationDate(null);
 

@@ -4,7 +4,7 @@ import br.com.dbc.vemser.GymExploreAPI.dto.PostCreateDTO;
 import br.com.dbc.vemser.GymExploreAPI.dto.PostResponseDTO;
 import br.com.dbc.vemser.GymExploreAPI.exception.RegraDeNegocioException;
 import br.com.dbc.vemser.GymExploreAPI.service.PostService;
-import lombok.RequiredArgsConstructor; // Importar
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
