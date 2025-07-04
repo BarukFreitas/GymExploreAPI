@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .container { background-color: #ffffff; max-width: 600px; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .header { background-color: #8b5cf6; color: #ffffff; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .header h1 { margin: 0; }
+        .content { padding: 20px; line-height: 1.6; color: #333; }
+        .content p { margin-bottom: 10px; }
+        .item-details { background-color: #f9f9f9; border: 1px solid #eee; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .item-details strong { color: #8b5cf6; }
+        .footer { text-align: center; font-size: 12px; color: #777; margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Troca Realizada com Sucesso!</h1>
+    </div>
+    <div class="content">
+        <h2>Olá, <span th:text="${userName}"></span>!</h2>
+        <p>A sua troca de pontos foi concluída com sucesso. Obrigado por fazer parte da nossa comunidade!</p>
+
+        <div class="item-details">
+            <p><strong>Item Trocado:</strong> <span th:text="${itemName}"></span></p>
+            <p><strong>Pontos Utilizados:</strong> <span th:text="${pointsCost}"></span></p>
+            <p><strong>Seu Saldo Restante:</strong> <span th:text="${remainingPoints}"></span></p>
+        </div>
+
+        <p style="margin-top: 20px;">Continue a interagir para ganhar mais pontos e desbloquear novas recompensas!</p>
+        <p>Atenciosamente,<br><strong>Equipa Gym Explore</strong></p>
+    </div>
+    <div class="footer">
+        <p>Você recebeu este e-mail porque realizou uma troca na nossa loja de pontos.</p>
+    </div>
+</div>
+</body>
+</html>
