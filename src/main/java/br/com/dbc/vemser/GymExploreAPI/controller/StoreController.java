@@ -21,12 +21,10 @@ public class StoreController {
 
     private final StoreService storeService;
 
-
     @GetMapping("/items")
     public ResponseEntity<List<StoreItem>> listItems() {
         return ResponseEntity.ok(storeService.listAllItems());
     }
-
 
     @PostMapping("/purchase/user/{userId}/item/{itemId}")
     public ResponseEntity<?> purchaseItem(@PathVariable Long userId, @PathVariable Integer itemId) {
@@ -37,9 +35,24 @@ public class StoreController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+
     @PostMapping("/admin/items")
     public ResponseEntity<StoreItem> createStoreItem(@Valid @RequestBody StoreItemCreateDTO itemCreateDTO) {
         StoreItem newItem = storeService.createItem(itemCreateDTO);
         return ResponseEntity.ok(newItem);
+    }
+
+    @PutMapping("/admin/items/{itemId}")
+    public ResponseEntity<StoreItem> updateStoreItem(
+            @PathVariable Integer itemId,
+            @Valid @RequestBody StoreItemCreateDTO itemUpdateDTO) throws RegraDeNegocioException {
+        StoreItem updatedItem = storeService.updateItem(itemId, itemUpdateDTO);
+        return ResponseEntity.ok(updatedItem);
+    }
+
+    @DeleteMapping("/admin/items/{itemId}")
+    public ResponseEntity<Void> deleteStoreItem(@PathVariable Integer itemId) throws RegraDeNegocioException {
+        storeService.deleteItem(itemId);
+        return ResponseEntity.noContent().build();
     }
 }

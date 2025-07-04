@@ -60,4 +60,24 @@ public class StoreService {
             log.error("Não foi possível enviar o e-mail de confirmação para o utilizador: " + userId, e);
         }
     }
+
+    @Transactional
+    public StoreItem updateItem(Integer itemId, StoreItemCreateDTO itemUpdateDTO) throws RegraDeNegocioException {
+        StoreItem item = storeItemRepository.findById(itemId)
+                .orElseThrow(() -> new RegraDeNegocioException("Item da loja não encontrado para atualização."));
+
+        item.setName(itemUpdateDTO.getName());
+        item.setDescription(itemUpdateDTO.getDescription());
+        item.setPointsCost(itemUpdateDTO.getPointsCost());
+
+        return storeItemRepository.save(item);
+    }
+
+    @Transactional
+    public void deleteItem(Integer itemId) throws RegraDeNegocioException {
+        if (!storeItemRepository.existsById(itemId)) {
+            throw new RegraDeNegocioException("Item da loja não encontrado para exclusão.");
+        }
+        storeItemRepository.deleteById(itemId);
+    }
 }

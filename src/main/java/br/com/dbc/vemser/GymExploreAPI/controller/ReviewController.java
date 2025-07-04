@@ -2,6 +2,7 @@ package br.com.dbc.vemser.GymExploreAPI.controller;
 
 import br.com.dbc.vemser.GymExploreAPI.dto.ReviewCreateDTO;
 import br.com.dbc.vemser.GymExploreAPI.dto.ReviewResponseDTO;
+import br.com.dbc.vemser.GymExploreAPI.exception.RegraDeNegocioException;
 import br.com.dbc.vemser.GymExploreAPI.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,5 +30,11 @@ public class ReviewController {
                                                     @RequestBody ReviewCreateDTO reviewCreateDTO) {
         ReviewResponseDTO newReview = reviewService.create(gymId, userId, reviewCreateDTO);
         return new ResponseEntity<>(newReview, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Integer reviewId) throws RegraDeNegocioException {
+        reviewService.deleteReview(reviewId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
