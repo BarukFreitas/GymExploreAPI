@@ -1,5 +1,7 @@
 package br.com.dbc.vemser.GymExploreAPI.service;
 
+import br.com.dbc.vemser.GymExploreAPI.entity.StoreItem;
+import br.com.dbc.vemser.GymExploreAPI.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -54,6 +56,44 @@ public class EmailService {
         helper.setFrom(remetente);
         helper.setTo(userEmail);
         helper.setSubject("Recebemos a sua mensagem - Gym Explore");
+        helper.setText(htmlBody, true);
+
+        emailSender.send(mimeMessage);
+    }
+
+    public void sendPurchaseConfirmationEmail(UserEntity user, StoreItem item) throws MessagingException {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+        Context context = new Context();
+        context.setVariable("userName", user.getUsername());
+        context.setVariable("itemName", item.getName());
+        context.setVariable("pointsCost", item.getPointsCost());
+        context.setVariable("remainingPoints", user.getPoints());
+
+
+        String htmlBody = templateEngine.process("purchase-confirmation-template", context);
+
+        helper.setFrom(remetente);
+        helper.setTo(user.getEmail());
+        helper.setSubject("Sua troca de pontos no Gym Explore!");
+        helper.setText(htmlBody, true);
+
+        emailSender.send(mimeMessage);
+    }
+    public void sendWelcomeEmail(UserEntity user) throws MessagingException {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+        Context context = new Context();
+        context.setVariable("username", user.getUsername());
+
+
+        String htmlBody = templateEngine.process("welcome-template", context);
+
+        helper.setFrom(remetente);
+        helper.setTo(user.getEmail());
+        helper.setSubject("Bem-vindo(a) ao Gym Explore!");
         helper.setText(htmlBody, true);
 
         emailSender.send(mimeMessage);

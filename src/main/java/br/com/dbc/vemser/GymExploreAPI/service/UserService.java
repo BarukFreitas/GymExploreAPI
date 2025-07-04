@@ -8,64 +8,63 @@ import br.com.dbc.vemser.GymExploreAPI.exception.RegraDeNegocioException;
 import br.com.dbc.vemser.GymExploreAPI.repository.RoleRepository;
 import br.com.dbc.vemser.GymExploreAPI.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.stream.Collectors; // Manter este import para o Collectors.toSet()
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final EmailService emailService;
+    @Transactional
     public UserResponseDTO registerUser(UserRegisterDTO userRegisterDTO) throws RegraDeNegocioException {
         if (userRepository.existsByUsername(userRegisterDTO.getUsername())) {
-            throw new RegraDeNegocioException("Nome de usuário já existe.");
+            throw new RegraDeNegocioException("Nome de utilizador já existe.");
         }
         if (userRepository.existsByEmail(userRegisterDTO.getEmail())) {
-            throw new RegraDeNegocioException("E-mail já cadastrado.");
+            throw new RegraDeNegocioException("E-mail já registado.");
         }
 
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(userRegisterDTO.getUsername());
         userEntity.setEmail(userRegisterDTO.getEmail());
-        userEntity.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword())); 
-        userEntity.setPoints(0); // Manter a inicialização de pontos da 'main'
+        userEntity.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
+        userEntity.setPoints(0);
 
         Role selectedRole = roleRepository.findByRoleName(userRegisterDTO.getRole())
-                .orElseThrow(() -> new RegraDeNegocioException("Role '" + userRegisterDTO.getRole() + "' não encontrada no banco de dados."));
+                .orElseThrow(() -> new RegraDeNegocioException("Role '" + userRegisterDTO.getRole() + "' não encontrada."));
 
         userEntity.setRoles(Collections.singleton(selectedRole));
 
         UserEntity savedUserEntity = userRepository.save(userEntity);
-        System.out.println("DEBUG: Usuário salvo no BD (ID): " + savedUserEntity.getId());
-        System.out.println("DEBUG: Roles do usuário salvo: " + savedUserEntity.getRoles().stream().map(Role::getRoleName).collect(Collectors.toSet()));
 
-        return toUserResponseDTO(savedUserEntity); 
+        try {
+            emailService.sendWelcomeEmail(savedUserEntity);
+        } catch (MessagingException e) {
+            log.error("Não foi possível enviar o e-mail de boas-vindas para: {}", savedUserEntity.getEmail(), e);
+        }
+
+        return toUserResponseDTO(savedUserEntity);
     }
 
     public Optional<UserResponseDTO> loginUser(String username, String password) {
-        System.out.println("DEBUG: Tentando logar com username: " + username); 
         Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
 
         if (userEntityOptional.isPresent()) {
             UserEntity userEntity = userEntityOptional.get();
-            System.out.println("DEBUG: Senha do BD para " + username + ": " + userEntity.getPassword()); 
-            System.out.println("DEBUG: Senha bruta fornecida para " + username + ": " + password); 
-
             if (passwordEncoder.matches(password, userEntity.getPassword())) {
-                System.out.println("DEBUG: Senhas correspondem!");
                 return Optional.of(toUserResponseDTO(userEntity));
-            } else {
-                System.out.println("DEBUG: Senhas NÃO correspondem!");
             }
-        } else {
-            System.out.println("DEBUG: Usuário " + username + " NÃO encontrado no BD.");
         }
         return Optional.empty();
     }
