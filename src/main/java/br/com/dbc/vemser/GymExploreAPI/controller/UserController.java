@@ -46,7 +46,6 @@ public class UserController {
             response.put("username", user.getUsername());
             response.put("email", user.getEmail());
             response.put("message", "Login bem-sucedido!");
-            // Adicionar as roles aqui
             response.put("roles", user.getRoles().stream()
                     .map(role -> role.getRoleName())
                     .collect(Collectors.toList()));
@@ -67,5 +66,11 @@ public class UserController {
         } catch (RuntimeException | RegraDeNegocioException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws RegraDeNegocioException {
+        userService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

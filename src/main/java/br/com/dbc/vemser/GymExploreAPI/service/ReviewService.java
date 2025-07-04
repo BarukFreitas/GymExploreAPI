@@ -6,6 +6,7 @@ import br.com.dbc.vemser.GymExploreAPI.entity.Gym;
 import br.com.dbc.vemser.GymExploreAPI.entity.Review;
 import br.com.dbc.vemser.GymExploreAPI.entity.UserEntity;
 import br.com.dbc.vemser.GymExploreAPI.enums.PointAction;
+import br.com.dbc.vemser.GymExploreAPI.exception.RegraDeNegocioException;
 import br.com.dbc.vemser.GymExploreAPI.repository.GymRepository;
 import br.com.dbc.vemser.GymExploreAPI.repository.ReviewRepository;
 import br.com.dbc.vemser.GymExploreAPI.repository.UserRepository;
@@ -26,6 +27,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final GamificationService gamificationService;
 
+    @Transactional
     public ReviewResponseDTO create(Integer gymId, Long userId, ReviewCreateDTO reviewCreateDTO) {
         Gym gym = gymRepository.findById(gymId)
                 .orElseThrow(() -> new EntityNotFoundException("Academia não encontrada!"));
@@ -50,6 +52,14 @@ public class ReviewService {
         return reviewRepository.findByGymId(gymId).stream()
                 .map(review -> toReviewResponseDTO(review, false))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteReview(Integer reviewId) throws RegraDeNegocioException {
+        if (!reviewRepository.existsById(reviewId)) {
+            throw new RegraDeNegocioException("Avaliação não encontrada para exclusão.");
+        }
+        reviewRepository.deleteById(reviewId);
     }
 
     private ReviewResponseDTO toReviewResponseDTO(Review review, boolean pointsAwarded) {

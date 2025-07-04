@@ -84,6 +84,14 @@ public class UserService {
         return user.getPoints();
     }
 
+    @Transactional
+    public void deleteUser(Long userId) throws RegraDeNegocioException {
+        if (!userRepository.existsById(userId)) {
+            throw new RegraDeNegocioException("Usuário não encontrado para exclusão.");
+        }
+        userRepository.deleteById(userId);
+    }
+
     private UserResponseDTO toUserResponseDTO(UserEntity userEntity) {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(userEntity.getId());
