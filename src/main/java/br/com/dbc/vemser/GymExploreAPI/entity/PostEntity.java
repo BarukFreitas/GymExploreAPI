@@ -20,8 +20,7 @@ public class PostEntity {
     @Column(name = "id_post")
     private Long id;
 
-    // >>> A CORREÇÃO ESTÁ AQUI <<<
-    @Lob // Informa ao Hibernate que este campo é um "Large Object" (CLOB para String)
+    @Lob
     @Column(name = "content", nullable = false)
     private String content;
 

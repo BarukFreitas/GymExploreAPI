@@ -29,7 +29,6 @@ public class PasswordResetController {
             passwordResetService.requestPasswordReset(forgotPasswordDTO.getEmail());
             return ResponseEntity.ok(Map.of("message", "Se o e-mail estiver registado, um link para redefinição de senha foi enviado."));
         } catch (RegraDeNegocioException e) {
-            // Retornamos OK mesmo em caso de erro para não revelar quais e-mails estão registados
             return ResponseEntity.ok(Map.of("message", "Se o e-mail estiver registado, um link para redefinição de senha foi enviado."));
         }
     }

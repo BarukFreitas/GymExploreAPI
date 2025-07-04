@@ -11,7 +11,7 @@ import br.com.dbc.vemser.GymExploreAPI.repository.ReviewRepository;
 import br.com.dbc.vemser.GymExploreAPI.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Import this
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ReviewService {
         return toReviewResponseDTO(savedReview, pointsWereAwarded);
     }
 
-    @Transactional // Add this annotation
+    @Transactional
     public List<ReviewResponseDTO> listByGym(Integer gymId) {
         return reviewRepository.findByGymId(gymId).stream()
                 .map(review -> toReviewResponseDTO(review, false))

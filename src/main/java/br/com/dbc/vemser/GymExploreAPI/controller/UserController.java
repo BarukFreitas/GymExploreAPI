@@ -5,7 +5,6 @@ import br.com.dbc.vemser.GymExploreAPI.dto.UserRegisterDTO;
 import br.com.dbc.vemser.GymExploreAPI.dto.UserResponseDTO;
 import br.com.dbc.vemser.GymExploreAPI.exception.RegraDeNegocioException;
 import br.com.dbc.vemser.GymExploreAPI.service.UserService;
-import br.com.dbc.vemser.GymExploreAPI.exception.RegraDeNegocioException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors; // Importar Collectors
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -33,8 +32,6 @@ public class UserController {
         response.put("username", registeredUserDTO.getUsername());
         response.put("email", registeredUserDTO.getEmail());
         response.put("message", "Usuário registrado com sucesso!");
-        // Opcional: Você pode adicionar as roles aqui também se precisar no frontend após o registro
-        // response.put("roles", registeredUserDTO.getRoles().stream().map(role -> role.getRoleName()).collect(Collectors.toList()));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -51,8 +48,8 @@ public class UserController {
             response.put("message", "Login bem-sucedido!");
             // Adicionar as roles aqui
             response.put("roles", user.getRoles().stream()
-                    .map(role -> role.getRoleName()) // Mapeia para o nome da role (String)
-                    .collect(Collectors.toList())); // Coleta como uma lista
+                    .map(role -> role.getRoleName())
+                    .collect(Collectors.toList()));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             Map<String, String> errorResponse = new HashMap<>();
