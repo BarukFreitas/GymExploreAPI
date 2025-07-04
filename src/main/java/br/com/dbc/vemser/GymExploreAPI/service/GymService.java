@@ -7,6 +7,7 @@ import br.com.dbc.vemser.GymExploreAPI.repository.GymRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // Import this
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -25,6 +26,7 @@ public class GymService {
         return objectMapper.convertValue(savedGym, GymDTO.class);
     }
 
+    @Transactional // Add this annotation
     public List<GymDTO> list() {
         return gymRepository.findAll()
                 .stream()
