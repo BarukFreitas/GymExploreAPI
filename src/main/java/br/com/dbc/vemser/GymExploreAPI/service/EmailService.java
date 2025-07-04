@@ -23,6 +23,9 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String remetente;
 
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     private final String destinatario = "netinho.rec@gmail.com";
 
     public void sendContactEmailToAdmin(String fromEmail, String subject, String message) throws MessagingException {
@@ -94,6 +97,26 @@ public class EmailService {
         helper.setFrom(remetente);
         helper.setTo(user.getEmail());
         helper.setSubject("Bem-vindo(a) ao Gym Explore!");
+        helper.setText(htmlBody, true);
+
+        emailSender.send(mimeMessage);
+    }
+
+    public void sendPasswordResetEmail(UserEntity user, String token) throws MessagingException {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+        Context context = new Context();
+        context.setVariable("username", user.getUsername());
+
+        String resetLink = frontendUrl + "/reset-password?token=" + token;
+        context.setVariable("resetLink", resetLink);
+
+        String htmlBody = templateEngine.process("password-reset-template", context);
+
+        helper.setFrom(remetente);
+        helper.setTo(user.getEmail());
+        helper.setSubject("Redefinição de Senha - Gym Explore");
         helper.setText(htmlBody, true);
 
         emailSender.send(mimeMessage);

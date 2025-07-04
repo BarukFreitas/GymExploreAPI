@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers("/**").permitAll()
                         .antMatchers(HttpMethod.POST, "/store/admin/items").hasRole("ADMIN")
+                        .antMatchers("/password/**").permitAll()
                 )
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
